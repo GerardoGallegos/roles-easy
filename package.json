@@ -1,6 +1,6 @@
 {
   "name": "roles-easy",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Express middleware for simple access with multiple roles, \"simple and beautiful\"",
   "main": "index.js",
   "scripts": {
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/GerardoGallegos/express-roles.git"
+    "url": "git+https://github.com/GerardoGallegos/roles-easy.git"
   },
   "keywords": [
     "express",
@@ -20,9 +20,9 @@
   "author": "Gerardo Gallegos <puxerop@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/GerardoGallegos/express-roles/issues"
+    "url": "https://github.com/GerardoGallegos/roles-easy/issues"
   },
-  "homepage": "https://github.com/GerardoGallegos/express-roles#readme",
+  "homepage": "https://github.com/GerardoGallegos/roles-easy#readme",
   "dependencies": {
     "bluebird": "^3.4.7"
   },
