@@ -14,7 +14,7 @@ const config = [
   {
     rol: 'member',
     routes: {
-        "user": "get",
+        "/profile/:uid": "$uid .read .write",
         "user": ".write .read",
     }
   }
@@ -193,8 +193,47 @@ describe('express-roles', ()=> {
         }
       }, next)
     })
-
   })
 
+
+
+  describe('Testing prev Mitleware', ()=> {
+    it('Has middleware (permit)', ()=> {
+      const req = getReqMock('post', '/onlypost', 'admin')
+      const next = () => {}
+      const prevMiddleware = (req, res, next)=> {
+        expect(req).to.be.ok
+        expect(res).to.be.ok
+        expect(next).to.be.ok
+        next()
+      }
+      const expressRolesWidthPrev = expressR(config, prevMiddleware)
+
+      expressRolesWidthPrev(req, {}, next)
+    })
+
+    it('Has middleware (No permit)', ()=> {
+      const req = getReqMock('put', '/onlypost', 'admin')
+      const next = () => {}
+      const prevMiddleware = (req, res, next)=> {
+        expect(req).to.be.ok
+        expect(res).to.be.ok
+        expect(next).to.be.ok
+        next()
+      }
+      const expressRolesWidthPrev = expressR(config, prevMiddleware)
+
+      expressRolesWidthPrev(req, {
+        status: code => {
+          expect(code).to.equal(401)
+          return {
+            json: r => {
+              expect(r).to.be.a('object')
+            }
+          }
+        }
+      }, next)
+    })
+  })
 
 })

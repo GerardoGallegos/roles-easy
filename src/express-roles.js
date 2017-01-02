@@ -1,9 +1,21 @@
 const getcleanAccess = require('./util/getcleanAccess')
 const isAllowMethod = require('./util/isAllowMethod')
 
-function expressRoles(rolesConfig) {
+/**
+* This is a funcion that return express middleware
+* @method expressRoles
+* @param {Object} rolesConfig - Routes and roles configuracion see Docs
+* @param {Function} prevMw - If exist Executes this Mitleware before
+* @param {String} $uid - User's uid
+*/
+function expressRoles(rolesConfig, prevMw, $uid) {
   // return the express middleware
   return (req, res, next)=> {
+
+    if(prevMw) {
+      prevMw(req, res, next)
+    }
+
     const method = req.method.toLowerCase()
     const route = req.route.path.toLowerCase()
     const myRol = req.decoded.rol.toLowerCase()
