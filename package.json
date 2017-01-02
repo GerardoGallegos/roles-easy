@@ -1,0 +1,33 @@
+{
+  "name": "express-roles",
+  "version": "0.1.0",
+  "description": "Express middleware for simple access with multiple roles, \"simple and beautiful\"",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha -w ./src/**/*.spec.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GerardoGallegos/express-roles.git"
+  },
+  "keywords": [
+    "express",
+    "middleware",
+    "express-roles",
+    "roles",
+    "rol"
+  ],
+  "author": "Gerardo Gallegos <puxerop@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/GerardoGallegos/express-roles/issues"
+  },
+  "homepage": "https://github.com/GerardoGallegos/express-roles#readme",
+  "dependencies": {
+    "bluebird": "^3.4.7"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^3.2.0"
+  }
+}
