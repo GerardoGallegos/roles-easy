@@ -1,5 +1,5 @@
  function getcleanAccess(access) {
-  const accessPattern = new RegExp(/(\.write|\.read|get|post|put|delete)/gi)
+  const accessPattern = new RegExp(/(\.write|\.read|get|post|put|delete|\$uid)/gi)
   let accessCleaned = access
   if(typeof access === 'string') {
     // string such as '.write .read'

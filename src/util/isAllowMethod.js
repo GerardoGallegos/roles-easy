@@ -1,6 +1,14 @@
 const Promise = require('bluebird')
 
-function isAllowMethod(rootAccessList, method) {
+/**
+* This function iterates and validate access
+* @method expressRoles
+* @param {Object} rolesConfig - Routes and roles configuracion see Docs
+* @param {Function} prevMw - If exist Executes this Mitleware before
+* @param {String} valid$uid - valid uid User's uid
+* @return {Promise}
+*/
+function isAllowMethod(rootAccessList, method, valid$uid) {
   return new Promise((done, reject)=> {
     rootAccessList.forEach((rootMethod, index) => {
       // Validate the request's method
@@ -8,6 +16,14 @@ function isAllowMethod(rootAccessList, method) {
         // has method access
 
         if(rootMethod === '.write') {
+          // Exist $uid
+          rootAccessList.forEach(m => {
+            if(m === '$uid') {
+              if(!valid$uid) {
+                reject()
+              }
+            }
+          })
           // [POST PUT DELETE] ...ok
           done()
         } else if(rootMethod === method) {
@@ -15,6 +31,14 @@ function isAllowMethod(rootAccessList, method) {
         }
       } else if(method === 'get') {
         if(rootMethod === 'get' || rootMethod === '.read') {
+          // Exist $uid
+          rootAccessList.forEach(m => {
+            if(m === '$uid') {
+              if(!valid$uid) {
+                reject()
+              }
+            }
+          })
           // [GET] ...ok
           done()
         }
@@ -27,6 +51,8 @@ function isAllowMethod(rootAccessList, method) {
     })
   })
 }
+
+// function isValidUid()
 
 
 module.exports = isAllowMethod

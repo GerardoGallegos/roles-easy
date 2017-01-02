@@ -20,11 +20,17 @@ const config = [
   }
 ]
 
-function getReqMock(method, route, rol) {
+function getReqMock(method, route, rol, decodedUid, paramsUid) {
   return {
       method,
       route: { path: route },
-      decoded: { rol }
+      decoded: {
+        rol: rol,
+        uid: decodedUid
+      },
+      params: {
+        uid: paramsUid
+      }
   }
 }
 
@@ -234,6 +240,42 @@ describe('express-roles', ()=> {
         }
       }, next)
     })
+  })
+
+
+  describe('Testing $uid', ()=> {
+
+    it('Has valid $uid { /profile/:uid } [POST] ', ()=> {
+      const req = getReqMock('post', '/profile/:uid', 'member', '123456', '123456')
+      const next = () => {
+        expect(true).to.be.true
+      }
+      expressRoles(req, {}, next)
+    })
+
+    it('Has NOT valid $uid { /profile/:uid } [POST] ', ()=> {
+      const req = getReqMock('post', '/profile/:uid', 'member', '123456', '123457')
+      const next = () => {}
+      expressRoles(req, {
+        status: code => {
+          expect(code).to.equal(401)
+          return {
+            json: r => {
+              expect(r).to.be.a('object')
+            }
+          }
+        }
+      }, next)
+    })
+
+    it('Has valid $uid { /profile/:uid } [GET] ', ()=> {
+      const req = getReqMock('get', '/profile/:uid', 'member', '123456', '123456')
+      const next = () => {
+        expect(true).to.be.true
+      }
+      expressRoles(req, {}, next)
+    })
+
   })
 
 })

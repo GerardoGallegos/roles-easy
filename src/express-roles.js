@@ -6,9 +6,9 @@ const isAllowMethod = require('./util/isAllowMethod')
 * @method expressRoles
 * @param {Object} rolesConfig - Routes and roles configuracion see Docs
 * @param {Function} prevMw - If exist Executes this Mitleware before
-* @param {String} $uid - User's uid
+* @return {Mitleware} Express Mitleware
 */
-function expressRoles(rolesConfig, prevMw, $uid) {
+function expressRoles(rolesConfig, prevMw) {
   // return the express middleware
   return (req, res, next)=> {
 
@@ -17,6 +17,7 @@ function expressRoles(rolesConfig, prevMw, $uid) {
     }
 
     const method = req.method.toLowerCase()
+    const valid$uid = req.params.uid ? req.params.uid === req.decoded.uid: false
     const route = req.route.path.toLowerCase()
     const myRol = req.decoded.rol.toLowerCase()
     const validRol = rolesConfig.filter(rol => rol.rol === myRol)
@@ -35,7 +36,7 @@ function expressRoles(rolesConfig, prevMw, $uid) {
       // has route?
       if(key === route) {
         const rootAccessList = getcleanAccess(rolRoutes[key])
-        isAllowMethod(rootAccessList, method)
+        isAllowMethod(rootAccessList, method, valid$uid)
           .then(()=> {
             next()
           })
