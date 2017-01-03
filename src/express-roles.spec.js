@@ -14,22 +14,35 @@ const config = [
   {
     rol: 'member',
     routes: {
-        "/profile/:uid": "$uid .read .write",
+        "/profile/:id": "$id .read .write",
         "user": ".write .read",
     }
   }
 ]
 
-function getReqMock(method, route, rol, decodedUid, paramsUid) {
+function getReqMock(method, route, rol, $varName, $varValue) {
   return {
       method,
       route: { path: route },
       decoded: {
         rol: rol,
-        uid: decodedUid
+        [$varName]: $varValue
       },
       params: {
-        uid: paramsUid
+        [$varName]: $varValue
+      }
+  }
+}
+
+function getReqMockNo$var(method, route, rol, $varName, $varValue) {
+  return {
+      method,
+      route: { path: route },
+      decoded: {
+        rol: rol
+      },
+      params: {
+        [$varName]: $varValue
       }
   }
 }
@@ -243,18 +256,18 @@ describe('express-roles', ()=> {
   })
 
 
-  describe('Testing $uid', ()=> {
+  describe('Testing actions type $variable', ()=> {
 
-    it('Has valid $uid { /profile/:uid } [POST] ', ()=> {
-      const req = getReqMock('post', '/profile/:uid', 'member', '123456', '123456')
+    it('Has valid $variable { /profile/:id } [POST] ', ()=> {
+      const req = getReqMock('post', '/profile/:id', 'member', 'id', '123456')
       const next = () => {
         expect(true).to.be.true
       }
       expressRoles(req, {}, next)
     })
 
-    it('Has NOT valid $uid { /profile/:uid } [POST] ', ()=> {
-      const req = getReqMock('post', '/profile/:uid', 'member', '123456', '123457')
+    it('Has invalid $variable { /profile/:id } [POST] ', ()=> {
+      const req = getReqMockNo$var('post', '/profile/:id', 'member', 'id', '123456')
       const next = () => {}
       expressRoles(req, {
         status: code => {
@@ -268,14 +281,30 @@ describe('express-roles', ()=> {
       }, next)
     })
 
-    it('Has valid $uid { /profile/:uid } [GET] ', ()=> {
-      const req = getReqMock('get', '/profile/:uid', 'member', '123456', '123456')
+    it('Has valid $variable { /profile/:id } [GET] ', ()=> {
+      const req = getReqMock('get', '/profile/:id', 'member', 'id', '123456')
       const next = () => {
         expect(true).to.be.true
       }
       expressRoles(req, {}, next)
     })
 
+    it('Has invalid $variable { /profile/:id } [GET] ', ()=> {
+      const req = getReqMockNo$var('get', '/profile/:id', 'member', 'id', '123456')
+      const next = () => {}
+      expressRoles(req, {
+        status: code => {
+          expect(code).to.equal(401)
+          return {
+            json: r => {
+              expect(r).to.be.a('object')
+            }
+          }
+        }
+      }, next)
+    })
+
   })
+
 
 })

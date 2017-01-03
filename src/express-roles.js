@@ -1,12 +1,13 @@
-const getcleanAccess = require('./util/getcleanAccess')
-const isAllowMethod = require('./util/isAllowMethod')
+const check_rol = require('./check-rol')
+const check_route = require('./check-route')
+const check_method = require('./check-method')
 
 /**
 * This is a funcion that return express middleware
 * @method expressRoles
 * @param {Object} rolesConfig - Routes and roles configuracion see Docs
 * @param {Function} prevMw - If exist Executes this Mitleware before
-* @return {Mitleware} Express Mitleware
+* @return {Function} Express Mitleware
 */
 function expressRoles(rolesConfig, prevMw) {
   // return the express middleware
@@ -16,37 +17,27 @@ function expressRoles(rolesConfig, prevMw) {
       prevMw(req, res, next)
     }
 
-    const method = req.method.toLowerCase()
-    const valid$uid = req.params.uid ? req.params.uid === req.decoded.uid: false
-    const route = req.route.path.toLowerCase()
-    const myRol = req.decoded.rol.toLowerCase()
-    const validRol = rolesConfig.filter(rol => rol.rol === myRol)
-    const errMsg = `Access Denied - You don\'t have permission to: ${route} - ${method}`
+    const errMsg = `Access Denied - You don\'t have permission to: ${req.route.path} - ${req.method.toLowerCase()}`
 
-    // No valid rol
-    if(validRol.length < 1) {
-      return res.status(401).json({
-        message: errMsg
+    check_rol(rolesConfig, req)
+      // Validates that req.decode.rol be correct
+      .then( validRol => {
+        return check_route(validRol, req)
       })
-    }
-
-    const rolRoutes = validRol[0].routes
-
-    for(let key in rolRoutes) {
-      // has route?
-      if(key === route) {
-        const rootAccessList = getcleanAccess(rolRoutes[key])
-        isAllowMethod(rootAccessList, method, valid$uid)
-          .then(()=> {
-            next()
-          })
-          .catch((err)=> {
-            return res.status(401).json({
-              message: errMsg
-            })
-          })
-      }
-    }
+      // Validates that req.route.path have a valid access
+      .then( validActions => {
+        return check_method(validActions, req)
+      })
+      // Validates that req.method have a valid access
+      .then(()=> {
+        // OK..
+        next()
+      })
+      .catch(err => {
+        res.status(401).json({
+          message: errMsg
+        })
+      })
   }
 }
 
