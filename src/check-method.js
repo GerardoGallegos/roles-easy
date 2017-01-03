@@ -30,7 +30,9 @@ function checkMethod (validActions, req) {
             if(action[0] === '$') {
               //validate if this variable exist in req.decode
               try {
-                if(!decoded[action.substring(1)]) {
+                const act = action.substring(1)
+                const req_param = req.params[act]
+                if(!decoded[act] && req_param === decoded[act]) {
                   reject(`You do not have access to this: ${action}`)
                 }
               } catch (err) {}
