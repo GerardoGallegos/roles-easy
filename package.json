@@ -1,6 +1,6 @@
 {
   "name": "roles-easy",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Express middleware for simple access with multiple roles, \"simple and beautiful\"",
   "main": "index.js",
   "scripts": {
