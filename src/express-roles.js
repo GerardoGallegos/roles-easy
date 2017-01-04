@@ -13,8 +13,10 @@ function expressRoles(rolesConfig, prevMw) {
   // return the express middleware
   return (req, res, next)=> {
 
+    const errMsg = `Access Denied
+    You don't have permission to: ${req.route.path} - ${req.method.toLowerCase()}`
+
     const i_next = () => {
-      console.log('LLEGO HASTA ACA')
       middleware()
     }
 
@@ -24,9 +26,6 @@ function expressRoles(rolesConfig, prevMw) {
     }
 
     middleware()
-
-    const errMsg = `Access Denied
-    You don't have permission to: ${req.route.path} - ${req.method.toLowerCase()}`
 
     function middleware() {
       check_rol(rolesConfig, req)
