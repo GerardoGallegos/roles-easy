@@ -1,3 +1,5 @@
+'use strict'
+
 const logic = require('./logic')
 
 /**
@@ -19,7 +21,7 @@ function expressRoles(rolesConf, prevMw) {
     if(prevMw) {
       return prevMw(req, res, i_next)
     }
-
+    
     logic(rolesConf, req, res, next)
 
   }

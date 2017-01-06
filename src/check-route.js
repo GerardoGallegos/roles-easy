@@ -1,25 +1,27 @@
+'use strict'
+
 const Promise = require('bluebird')
-const getCleanActions = require('./util/getCleanActions')
+const getCleanActions = require('./util/get-clean-actions')
 
 function checkRoute (validRol, req) {
   return new Promise((done, reject)=> {
-    const validRoutes = validRol.routes
-    const reqRoute = req.route.path.toLowerCase()
+    const routes = validRol.routes
+    const req_route = req.route.path.toLowerCase()
 
-
-    if(validRol.rol === 'public') {
-      return done('public')
-    } else {
+    // validate is object no Array
+    if(!Array.isArray(routes) && typeof routes === 'object' ) {
       // Iterate in valid routes
-      for(route in validRoutes) {
-        if(route === reqRoute) {
+      for(route in routes) {
+        if(route.toLowerCase() === req_route) {
           // pass the valid actions for this route as an Array
-          return done(getCleanActions(validRoutes[route]))
+          return done(getCleanActions(routes[route]))
         }
       }
-      // End iterate and no have access
-      reject(`You do not have access to this route ${reqRoute}`)
+      reject(`You do not have access to this route ${req_route}`)  
+    } else {
+      throw `You need pass an Object such as { '/route' : 'allowAction' }  in routes of rol`
     }
+
   })
 }
 

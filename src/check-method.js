@@ -1,6 +1,6 @@
+'use strict'
+
 const Promise = require('bluebird')
-
-
 /**
 *  This function validate that the action is permit for this route
 *  The actions can be of 3 different types such as:
@@ -13,69 +13,38 @@ const Promise = require('bluebird')
 * @param {Array} validActions - Actions valid in config file, such as ['post', '.write', '.read']
 * @return {Promise}
 */
+
 function checkMethod (validActions, req) {
   return new Promise((done, reject)=> {
     const req_method = req.method.toLowerCase()
     const decoded = req.decoded
 
-    if(validActions === 'public') {
-      done()
-    } else {
-      validActions.forEach((valid_method, index)=> {
-        // Validate the request's method
-        if(req_method === 'post' || req_method === 'put' || req_method === 'delete') {
+    validActions.forEach((valid_method, index)=> {
 
-          // has req_method access
-          if(valid_method === '.write') {
+      if(valid_method === req_method) {
+        // Iterate if Exist a action type $variable
+        validActions.forEach(action => {
+          if(action[0] === '$') {
 
-            // Iterate if Exist a action type $variable
-            validActions.forEach(action => {
-              if(action[0] === '$') {
-                //validate if this variable exist in req.decode
-                try {
-                  const act = action.substring(1)
-                  const req_param = req.params[act]
-                  if(!decoded[act] || req_param !== decoded[act]) {
-                    reject(`You do not have access to this: ${action}`)
-                  }
-                } catch (err) {}
+            //validate if this variable exist in req.decode
+            try {
+              const act = action.substring(1)
+              const req_param = req.params[act]
+
+              if(!decoded[act] || req_param !== decoded[act]) {
+                reject(`You do not have access to this: ${action}`)
               }
-            })
-
-            // [POST PUT DELETE] ...ok
-            done()
-          } else if(valid_method === req_method) {
-            done()
+            } catch (err) {}
           }
-        } else if(req_method === 'get') {
-          if(valid_method === 'get' || valid_method === '.read') {
 
-            // Iterate if Exist a action type $variable
-            validActions.forEach(action => {
-              if(action[0] === '$') {
-                //validate if this variable exist in req.decode
-                try {
-                  const act = action.substring(1)
-                  const req_param = req.params[act]
-                  if(!decoded[act] || req_param !== decoded[act]) {
-                    reject(`You do not have access to this: ${action}`)
-                  }
-                } catch (err) {}
-              }
-            })
+          return done()
+        })
+      } else if(index === validActions.length-1) {
+        reject(`You do not have access to this `)
+      }
+     
+    })
 
-            // [GET] ...ok
-            done()
-          }
-        } else {
-          reject()
-        }
-        // End
-        if(index + 1 === validActions.length) {
-          reject()
-        }
-      })
-    }
   })
 }
 

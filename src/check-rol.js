@@ -1,19 +1,25 @@
+'use strict'
+
 const Promise = require('bluebird')
 
 
-function checkRol (rolesConfig, req) {
+function checkRol (config, req) {
   return new Promise((done, reject)=> {
     
-    const clientRol = req.decoded.rol.toLowerCase()
+    const client_rol = req.decoded.rol.toLowerCase()
 
-    rolesConfig.forEach((validRol, index) => {
-      if(validRol.rol === 'public' || rol.rol === clientRol) {
-        done(validRol)
-      } else if(index === rolesConfig.length - 1) {
-        // Not have valid rol
-        reject(`You do not have an authorized profile: ${clientRol}`)
-      }
-
+    config.forEach((valid_rol, index) => {
+      
+      // Only is not public roles
+      if(valid_rol.rol != 'public') {
+        
+        if(client_rol === valid_rol.rol) {
+          done(valid_rol)
+        } else if(index === config.length - 1) {
+          // Not have valid rol
+          reject(`You do not have an authorized profile: ${client_rol}`)
+        }
+      } 
     })
 
   })
