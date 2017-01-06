@@ -11,7 +11,7 @@ function checkRoute (validRol, req) {
     // validate is object no Array
     if(!Array.isArray(routes) && typeof routes === 'object' ) {
       // Iterate in valid routes
-      for(route in routes) {
+      for(let route in routes) {
         if(route.toLowerCase() === req_route) {
           // pass the valid actions for this route as an Array
           return done(getCleanActions(routes[route]))
