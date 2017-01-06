@@ -1,1 +1,1 @@
-module.exports =  require('./src/express-roles')
+module.exports =  require('./src/roles-easy')

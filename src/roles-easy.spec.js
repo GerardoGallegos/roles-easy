@@ -3,6 +3,14 @@ const expect = require('chai').expect
 const expressR = require('./express-roles')
 const config = [
   {
+    rol: 'public',
+    routes: [
+      '/home',
+      '/blog',
+      '/contact'
+    ]
+  },
+  {
     rol: 'admin',
     routes: {
       "/readandwrite": ".read .write",
@@ -305,6 +313,17 @@ describe('express-roles', ()=> {
     })
 
   })
+})
 
+
+describe('Test Public routes', ()=> {
+
+  it('Is public route  { /home } [GET]', ()=> {
+    const req = getReqMock('get', '/home', 'anonymous')
+    const next = () => {
+      expect(true).to.be.true
+    }
+    expressRoles(req, {}, next)
+  })
 
 })
